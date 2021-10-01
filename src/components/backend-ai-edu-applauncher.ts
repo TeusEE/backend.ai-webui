@@ -207,7 +207,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
       if (sessionStatus !== 'RUNNING') {
-        this.notification.text = _text('eduapi.sessionStatusIs') + `${sessionStatus}. ` + _text('eduapi.PleaseReload');
+        this.notification.text = _text('eduapi.sessionStatusIs') + ` ${sessionStatus}. ` + _text('eduapi.PleaseReload');
         this.notification.show(true);
         return;
       }
@@ -267,13 +267,13 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         return;
       }
       const templateId = sessionTemplates[0].id; // NOTE: use the first template. will it be okay?
+      const name = sessionTemplates[0].name || null;
+      const resources = sessionTemplates[0].template || {};
       try {
-        const mounts = await globalThis.backendaiclient.eduApp.get_mount_folders();
-        const resources = mounts ? {mounts} : {};
         let response;
         try {
           appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));
-          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources);
+          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, name, resources, 20000);
         } catch (err) {
           console.error(err);
           if (err && err.message) {

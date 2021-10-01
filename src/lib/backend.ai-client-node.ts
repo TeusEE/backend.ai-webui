@@ -871,20 +871,20 @@ class Client {
     }
     if (resources && Object.keys(resources).length > 0) {
       let config = {};
-      if (resources['cpu']) {
-        config['cpu'] = resources['cpu'];
+      if (resources['spec']['resources']['cpu']) {
+        config['cpu'] = resources['spec']['resources']['cpu'];
       }
-      if (resources['mem']) {
-        config['mem'] = resources['mem'];
+      if (resources['spec']['resources']['mem']) {
+        config['mem'] = resources['spec']['resources']['mem'];
       }
-      if (resources['cuda.device']) {
-        config['cuda.device'] = parseInt(resources['cuda.device']);
+      if (resources['spec']['resources']['cuda.device']) {
+        config['cuda.device'] = parseInt(resources['spec']['resources']['cuda.device']);
+      }
+      if (resources['spec']['resources']['cuda.shares']) {
+        config['cuda.shares'] = parseFloat(resources['spec']['resources']['cuda.shares']).toFixed(2);
       }
       if (resources['fgpu']) {
         config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
-      }
-      if (resources['cuda.shares']) {
-        config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
       }
       if (resources['rocm']) {
         config['rocm.device'] = resources['rocm'];
@@ -933,15 +933,15 @@ class Client {
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
-      if (resources['scaling_group']) {
-        params['config'].scaling_group = resources['scaling_group'];
+      if (resources['spec']['scaling_group']) {
+        params['config'].scaling_group = resources['spec']['scaling_group'];
       }
       if (resources['shmem']) {
         params['config'].resource_opts = {};
         params['config'].resource_opts.shmem = resources['shmem'];
       }
-      if (resources['env']) {
-        params['config'].environ = resources['env'];
+      if (resources['spec']['kernel']['environ']) {
+        params['config'].environ = resources['spec']['kernel']['environ'];
       }
     }
     const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
